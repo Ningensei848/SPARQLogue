@@ -1,8 +1,8 @@
+import Mustache from 'mustache'
 import { Id } from '~/src/common/types'
 import { pattern_comment, pattern_endpoint } from '~/src/common/util/pattern'
 import { isExtractedAtMark } from '~/src/common/util/validation'
 import { query } from '~/src/lib/d3sparql/util/query'
-import { QueryResponse } from '~/src/lib/d3sparql/util/types'
 import { AppDispatch } from '~/src/store'
 import { mergeResult, setResult } from '../../resultSolution/resultSolutionSlice'
 import { extractMetadata } from './extractMeta'
@@ -13,9 +13,40 @@ interface asyncQueryProps {
   dispatcher: AppDispatch
 }
 
+const getSingleVar = (elem: string): string => {
+  try {
+    const temp = JSON.parse(elem)
+    if (Array.isArray(temp)) {
+      return temp[0]
+    } else {
+      return temp
+    }
+  } catch (err) {
+    console.error(err)
+    return elem
+  }
+}
+
+const getFormVar = (sparql: string): { [key: string]: string } => {
+  const pattern = /^#+\s*@+param\s+(\w+)\s*=\s*([[{]*[^\]}]*[\]}]*)/i
+  const m_list = sparql.split('\n').map((line) => pattern.exec(line.trim()))
+  const res: { [key: string]: string } = {}
+  for (const m of m_list) {
+    if (m) {
+      res[m[1]] = getSingleVar(m[2])
+    }
+  }
+  return res
+}
+
+const replaceSparql = (sparql: string) => {
+  const formVariable = getFormVar(sparql)
+  return Mustache.render(sparql, formVariable)
+}
+
 const tryQueryingAsync = async (sparql: string, url: string) => {
   try {
-    const data = await query(sparql, url)
+    const data = await query(replaceSparql(sparql), url)
     return data
   } catch (err) {
     console.error(err)
@@ -65,15 +96,13 @@ export const makeAsyncQueryList = (props: asyncQueryProps) => {
   const [editorId, queryValue, dispatch] = [props.id, props.query, props.dispatcher]
 
   const endpoints = getEndpointList(queryValue, editorId)
-  console.log(`endpoints is ${endpoints}, isArray is ${Array.isArray(endpoints)}`)
+  dispatch(setResult({ id: editorId, data: undefined })) // reset
 
   const asyncFunctions = endpoints.map((url) => {
     // setresult だと，結果が上書きされてしまう
     // マージするように変更
     return async () => dispatch(mergeResult({ id: editorId, data: await tryQueryingAsync(queryValue, url) }))
   })
-
-  console.log(`asyncfunc is ${asyncFunctions}`)
 
   return asyncFunctions.map((f) => f())
 }

@@ -32,6 +32,7 @@ interface EditorProps {
   endpoint?: string
   className?: string
   config?: CodeMirror.EditorConfiguration // 後でextendして設定内容を追加
+  mode: string
 }
 
 const RawEditor: React.FC<EditorProps> = (props) => {
@@ -120,6 +121,7 @@ const RawEditor: React.FC<EditorProps> = (props) => {
 // caution! : React.FC内部でstyled-component は使えない -------------------------------------------------------------
 const Editor = styled(RawEditor)`
   font-size: 0.9rem;
+  ${(props) => (props.mode == 'search' ? 'display: none;' : '')}
 `
 // -----------------------------------------------------------------------------------------------------------------
 // finally, Export Component. --------------------------------------------------------------------------------------

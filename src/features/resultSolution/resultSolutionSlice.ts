@@ -94,11 +94,11 @@ const resultSolutionSlice = createSlice({
     setResult(state, action: PayloadAction<ResultSolution>) {
       resultAdaptor.upsertOne(state.result, action.payload) // non-serializable なオブジェクトには使えない
     },
-    mergeResult(state, action: PayloadAction<{ id: Id; data: QueryPromise }>) {
+    mergeResult(state, action: PayloadAction<{ id?: Id; data?: QueryPromise }>) {
       const { id, data } = action.payload
+      if (!(id && data)) return // id and data exist
       const pre = state.result.entities[id]?.data
       if (data) {
-        console.log(`post is ${JSON.stringify(data, null, 2)}`)
         const mergedResult = merge(pre ? pre : {}, data, {
           arrayMerge: (d: any[], s: any[], _o: never) => [...new Set(merge(d, s))]
         })
