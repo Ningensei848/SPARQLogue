@@ -1,0 +1,56 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "env": {
+    "browser": true, // Enables browser globals like window and document
+    "amd": true, // Enables require() and define() as global variables as per the amd spec.
+    "node": true // Enables Node.js global variables and Node.js scoping.
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "extends": [
+    // 下に書くほど優先度が高くなる（後から上書き実行される）
+    "eslint:recommended", // Default rules
+    "plugin:@typescript-eslint/recommended", // TypeScript rules
+    "plugin:react/recommended", // React rules
+    "plugin:react-hooks/recommended", // React hooks rules
+    "plugin:jsx-a11y/recommended", // Accessibility rules
+    // ESLint + Prettier - import 順もフォーマットしたい cf. https://bit.ly/2GA7Tvl
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "react/prop-types": "off", // We will use TypeScript's types for component props instead.
+    "react/react-in-jsx-scope": "off", // No need to import React with Next.js
+    "jsx-a11y/anchor-is-valid": "off", // This rule is not compatible with how Next.js's <Link />
+    // I suggest this setting for requiring return types on functions only where usefull
+    "@typescript-eslint/explicit-function-return-type": [
+      "warn",
+      {
+        "allowExpressions": true,
+        "allowConciseArrowFunctionExpressionsStartingWithVoid": true
+      }
+    ],
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "newlines-between": "always"
+      }
+    ]
+  },
+  "globals": {
+    "React": "writable"
+  }
+}

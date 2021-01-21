@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@600&display=swap');
+
+main {
+  font-size: 62.5%;
+}
+
+.CodeMirror {
+  font-family: 'Fira Code', 'Lucida Console', 'Courier New', monospace;
+  border: 0.1rem solid #eee;
+  height: auto;
+}
