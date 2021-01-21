@@ -20,18 +20,18 @@ export const isFormMode = (arg: any): arg is FormMode => {
 }
 
 export const isExtractedAtMark = (arg: any): arg is AtMark => {
-  const { at, var_name, var_elem, opt_name, opt_elem, parent_id } = arg
+  // const { at, var_name, var_elem, opt_name, opt_elem, parent_id } = arg
 
   // 各要素は Verify され， boolean な値を返す．すべて true であることが期待される．
   const verificationList = [
-    isAtMark(at) ? true : false,
-    typeof var_name === 'string' ? true : false,
-    typeof var_elem === 'string' ? true : false,
+    isAtMark(arg?.at) ? true : false,
+    typeof arg?.var_name === 'string' ? true : false,
+    typeof arg?.var_elem === 'string' ? true : false,
     // isFormOptionName(opt_name) ? true : false,
     // typeof opt_elem === 'string' ? true : false,
-    typeof opt_name === 'undefined' || isFormOptionName(opt_name) ? true : false,
-    ['undefined', 'string'].includes(typeof opt_elem) ? true : false,
-    isId(parent_id) ? true : false
+    typeof arg?.opt_name === 'undefined' || isFormOptionName(arg?.opt_name) ? true : false,
+    ['undefined', 'string'].includes(typeof arg?.opt_elem) ? true : false,
+    isId(arg?.parent_id) ? true : false
   ]
   // false が一つでも含まれていたら，false を返す（そうでなければ， true を返す）
   return verificationList.includes(false) ? false : true

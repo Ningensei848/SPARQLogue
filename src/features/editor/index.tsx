@@ -12,6 +12,7 @@ import { selectEditorById, setEditor } from '~/src/features/editor/editorSlice'
 import { setResult } from '~/src/features/resultSolution/resultSolutionSlice'
 import { useAppDispatch } from '~/src/store'
 import { RootState } from '~/src/store/rootReducer'
+import { makeAsyncQueryList } from './common/asyncQuery'
 
 const globalEditorConfig: CodeMirror.EditorConfiguration = {}
 
@@ -69,7 +70,15 @@ const RawEditor: React.FC<EditorProps> = (props) => {
   const delayMillisecond = 800 // deley time
   const getResult = debounce(async (localCurrentValue) => {
     dispatch(setEditor({ id: editorId, query: localCurrentValue }))
-    dispatch(setResult({ id: editorId, data: await tryQueryingAsync(localCurrentValue) }))
+    // １．endpointを掘る２．複数箇所ある場合，複数に分けてdispatchを更新
+    // promise.all() をつかう
+    const args = {
+      id: editorId,
+      query: localCurrentValue,
+      dispatcher: dispatch
+    }
+    // dispatch(setResult({ id: editorId, data: await tryQueryingAsync(localCurrentValue) }))
+    await Promise.all(makeAsyncQueryList(args))
   }, delayMillisecond)
   // getResultは描画ごとに変更されてしまうため第二引数から除外する（？）
   // eslint-disable-next-line react-hooks/exhaustive-deps

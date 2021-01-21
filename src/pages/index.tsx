@@ -16,6 +16,7 @@ const Index: React.FC = () => {
   // 他の画面においても，クエリや結果等はすべてここのIDで管理する（一番外側にある親コンポネントにID情報を管理させる）
   const defaultValue =
     '# @param hoge=qwerty #[textinput]=["quintet", "abcdefg", "poiuytr"]\n' +
+    '# @endpoint urls=["https://dbpedia.org/sparql", "https://query.wikidata.org/bigdata/namespace/wdq/sparql"]\n' +
     '\n' +
     'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n' +
     'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' +
@@ -40,8 +41,8 @@ const Index: React.FC = () => {
           <ProTip />
           <Copyright />
         </Box>
-          <GeneratedForm parent_id={editorId} mode={mode} />
-          <Editor id={editorId} query={defaultValue} />
+        <GeneratedForm parent_id={editorId} mode={mode} />
+        <Editor id={editorId} query={defaultValue} />
         <ResultSolution id={editorId} />
       </Container>
     </BaseLayout>

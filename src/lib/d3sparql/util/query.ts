@@ -1,9 +1,26 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+
 import { Parser } from 'sparqljs'
+import { QueryResponse } from './types'
+
 const sparqlParser = new Parser()
 
-import fetch from './fetch'
+const fetch = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
+  const res = await axios
+    .request(config)
+    .then((response: AxiosResponse) => {
+      return response
+    })
+    .catch((error: AxiosError) => {
+      console.error('axios Error is happen: ', error)
+      throw new Error(
+        'Fetch data was failed. \nPlease confirm your 1. `config` 2. network connection (e.g. Proxy) 3. other reason.'
+      )
+    })
+  return res
+}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ErrorMessage = (error: Error, title: string, variable: any, target?: string): void => {
   if (target) {
     console.error(
@@ -54,7 +71,7 @@ const makeConfig = (url: URL, config?: AxiosRequestConfig): AxiosRequestConfig =
   }
 }
 
-const query = (sparql: string, endpoint?: string, config?: AxiosRequestConfig): Promise<any> => {
+export const query = (sparql: string, endpoint?: string, config?: AxiosRequestConfig): Promise<QueryResponse> => {
   /*
     Args:
         sparql: SPARQL Query
@@ -124,17 +141,17 @@ const query = (sparql: string, endpoint?: string, config?: AxiosRequestConfig): 
   //   - SPARQL 1.1 Query Results JSON Format: cf. https://www.w3.org/TR/2013/REC-sparql11-results-json-20130321/
   //   - SPARQL 1.1 Query Results CSV and TSV Formats:  cf. https://www.w3.org/TR/2013/REC-sparql11-results-csv-tsv-20130321/
   //   - SPARQL Query Results XML Format (Second Edition): cf. https://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321/
-  const response = async (): Promise<any> => {
+  const response = async (): Promise<QueryResponse> => {
     try {
       const res: AxiosResponse = await fetch({ ...queryConfig, ...defaultConfig })
       console.log('Response: ', res)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return res.data
     } catch (error) {
       console.error(error)
+      throw Error(`on querying, error occured!`)
     }
   }
 
   return response()
 }
-
-export default query

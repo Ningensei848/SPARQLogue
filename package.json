@@ -21,6 +21,7 @@
     "codemirror": "^5.58.2",
     "cssesc": "^3.0.0",
     "d3": "^6.2.0",
+    "deepmerge": "^4.2.2",
     "lodash.debounce": "^4.0.8",
     "next": "10.0.0",
     "react": "17.0.1",
@@ -55,11 +56,6 @@
     "lint-staged": "^10.5.1",
     "prettier": "^2.2.0",
     "typescript": "^4.0.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix",

@@ -6,6 +6,7 @@ import { FormElement, StylingProps } from '~/src/features/form//types'
 import { ParamOnEditableForm } from '~/src/features/form/edit/param'
 import { FormVariable, selectFormVarById } from '~/src/features/form/formSlice'
 import { RootState } from '~/src/store/rootReducer'
+import { EndpointOnEditableForm } from './endpoint'
 
 interface createFormProps {
   formVarState: FormVariable | undefined
@@ -31,7 +32,7 @@ const createForm: React.FC<createFormProps> = (props) => {
     return <ParamOnEditableForm {...args} />
   } else if (atType == 'endpoint') {
     return null
-    // return <EndpointOnEditableForm {...args} />
+    return <EndpointOnEditableForm {...args} />
   } else if (atType == 'proxy') {
     return null
     // return <ProxyOnEditableForm {...args} />
